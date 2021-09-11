@@ -1,2 +1,2 @@
-# min_pyt
-Minimalist PyTorch Tests
+# minpt
+Minimalist Raw PyTorch Experiments
