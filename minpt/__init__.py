@@ -28,11 +28,7 @@ def get_dl(train_data, test_data, batch_size=64):
     test_dl = DataLoader(test_data, batch_size=batch_size)
     return train_dl, test_dl
 
-def get_model():
-    # Get cpu or gpu device for training.
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    print("Using {} device".format(device))
-
+def get_model(device):
     # Define model
     class NeuralNetwork(nn.Module):
         def __init__(self):
@@ -55,7 +51,7 @@ def get_model():
     return model
 
 
-def train(dataloader, model, loss_fn, optimizer):
+def train(dataloader, model, loss_fn, optimizer, device):
     size = len(dataloader.dataset)
     model.train()
     for batch, (X, y) in enumerate(dataloader):
@@ -74,7 +70,7 @@ def train(dataloader, model, loss_fn, optimizer):
             loss, current = loss.item(), batch * len(X)
             print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
             
-def test(dataloader, model, loss_fn):
+def test(dataloader, model, loss_fn, device):
     size = len(dataloader.dataset)
     num_batches = len(dataloader)
     model.eval()
@@ -91,10 +87,14 @@ def test(dataloader, model, loss_fn):
 
 
 def run():
+    # Get cpu or gpu device for training.
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    print("Using {} device".format(device))
+
     train_data, test_data = get_fashion_mnist()
     batch_size = 64
     train_dl, test_dl = get_dl(train_data, test_data, batch_size)
-    model = get_model()
+    model = get_model(device)
     loss_fn = nn.CrossEntropyLoss()
     learning_rate = 1e-3
     optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
@@ -102,8 +102,8 @@ def run():
     epochs = 5
     for t in range(epochs):
         print(f"Epoch {t+1}\n-------------------------------")
-        train(train_dl, model, loss_fn, optimizer)
-        test(test_dl, model, loss_fn)
+        train(train_dl, model, loss_fn, optimizer, device)
+        test(test_dl, model, loss_fn, device)
     print("Done!")
 
     #torch.save(model.state_dict(), "model.pth")
