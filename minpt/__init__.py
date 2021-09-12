@@ -2,11 +2,11 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader
 from torchvision import datasets
-from torchvision.transforms import ToTensor, Lambda, Compose
+from torchvision.transforms import ToTensor, Lambda
 
 def get_fashion_mnist():
     # Download training data from open datasets.
-    training_data = datasets.FashionMNIST(
+    train_data = datasets.FashionMNIST(
         root="data",
         train=True,
         download=True,
@@ -20,13 +20,13 @@ def get_fashion_mnist():
         download=True,
         transform=ToTensor(),
     )
-    return training_data, test_data
+    return train_data, test_data
 
 def get_dl(train_data, test_data, batch_size=64):
     # Create data loaders.
-    train_dataloader = DataLoader(training_data, batch_size=batch_size)
-    test_dataloader = DataLoader(test_data, batch_size=batch_size)
-    return train_dataloader, test_dataloader
+    train_dl = DataLoader(train_data, batch_size=batch_size)
+    test_dl = DataLoader(test_data, batch_size=batch_size)
+    return train_dl, test_dl
 
 def get_model():
     # Get cpu or gpu device for training.
