@@ -69,7 +69,8 @@ def train(dataloader, model, loss_fn, optimizer, device):
         #if batch % 100 == 0:
         #    loss, current = loss.item(), batch * len(X)
         #    print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
-            
+    return loss
+
 def test(dataloader, model, loss_fn, device):
     size = len(dataloader.dataset)
     num_batches = len(dataloader)
@@ -83,8 +84,8 @@ def test(dataloader, model, loss_fn, device):
             correct += (pred.argmax(1) == y).type(torch.float).sum().item()
     test_loss /= num_batches
     correct /= size
-    print(f"Test Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} \n")
-
+    #print(f"Test Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} \n")
+    return loss, correct
 
 def run(batch_size=64, learning_rate=1e-3, epochs=5, model=None, device=None):
     if not device:
@@ -101,30 +102,30 @@ def run(batch_size=64, learning_rate=1e-3, epochs=5, model=None, device=None):
     optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
 
     for t in range(epochs):
-        print(f"Epoch {t+1}\n-------------------------------")
-        train(train_dl, model, loss_fn, optimizer, device)
-        test(test_dl, model, loss_fn, device)
-    print("Done!")
+        train_loss = train(train_dl, model, loss_fn, optimizer, device)
+        test_loss, test_acc = test(test_dl, model, loss_fn, device)
+        print(f"Epoch {t+1}, Train Loss: {train_loss:>4f}, Test Loss: {test_loss:>4f}, Test Accuracy {test_acc:>1.3%}")
+    #print("Done!")
 
     #torch.save(model.state_dict(), "model.pth")
     #print("Saved PyTorch Model State to model.pth")
 
-    classes = [
-        "T-shirt/top",
-        "Trouser",
-        "Pullover",
-        "Dress",
-        "Coat",
-        "Sandal",
-        "Shirt",
-        "Sneaker",
-        "Bag",
-        "Ankle boot",
-    ]
+    #classes = [
+    #    "T-shirt/top",
+    #    "Trouser",
+    #    "Pullover",
+    #    "Dress",
+    #    "Coat",
+    #    "Sandal",
+    #    "Shirt",
+    #    "Sneaker",
+    #    "Bag",
+    #    "Ankle boot",
+    #]
 
-    model.eval()
-    x, y = test_data[0][0], test_data[0][1]
-    with torch.no_grad():
-        pred = model(x)
-        predicted, actual = classes[pred[0].argmax(0)], classes[y]
-        print(f'Predicted: "{predicted}", Actual: "{actual}"')
+    #model.eval()
+    #x, y = test_data[0][0], test_data[0][1]
+    #with torch.no_grad():
+    #    pred = model(x)
+    #    predicted, actual = classes[pred[0].argmax(0)], classes[y]
+    #    print(f'Predicted: "{predicted}", Actual: "{actual}"')
