@@ -104,7 +104,7 @@ def run(batch_size=64, learning_rate=1e-3, epochs=5, model=None, device=None):
     for t in range(epochs):
         train_loss = train(train_dl, model, loss_fn, optimizer, device)
         test_loss, test_acc = test(test_dl, model, loss_fn, device)
-        print(f"Epoch {t+1}, Train Loss: {train_loss:>4f}, Test Loss: {test_loss:>4f}, Test Accuracy {test_acc:>1.3%}")
+        print(f"Epoch {t+1}, Train Loss: {train_loss:.4f}, Test Loss: {test_loss:.4f}, Test Accuracy {test_acc:.3%}")
     #print("Done!")
 
     #torch.save(model.state_dict(), "model.pth")
